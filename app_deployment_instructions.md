@@ -9,9 +9,11 @@
 3. Copy over the scripts from the previous vagrant and provision files, and paste them into the retrospective files. 
 
 Your vagrant file should look like this:
+
 ![Alt text](images/First_vagrant.PNG)
 
 Your provision file should look like this:
+
 ![Alt text](images/provision.PNG)
 
 ### Adding app folder from local machine to VM
