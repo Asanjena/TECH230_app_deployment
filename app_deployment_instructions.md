@@ -9,10 +9,10 @@
 3. Copy over the scripts from the previous vagrant and provision files, and paste them into the retrospective files. 
 
 Your vagrant file should look like this:
-![Alt text](First_vagrant.PNG)
+![Alt text](images/First_vagrant.PNG)
 
 Your provision file should look like this:
-![Alt text](provision.PNG)
+![Alt text](images/provision.PNG)
 
 ### Adding app folder from local machine to VM
 1. To your vagrant file add a line saying:
@@ -20,7 +20,7 @@ Your provision file should look like this:
 ```
 config.vm.synced_folder "app", "/home/vagrant/app"
 ```
-![Alt text](First_vagrant.PNG)
+![Alt text](images/First_vagrant.PNG)
 
 **note** - If you make a change locally, it will also do the change in your VM. Changes to your VM will also occur locally.
 
