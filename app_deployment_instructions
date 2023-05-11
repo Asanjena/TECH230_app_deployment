@@ -36,6 +36,7 @@ e.g., cd app_deployment
 
 ```
 cd environment
+
 ```
 
 4. type 'ls' again to see if 'spec-tests' appears
