@@ -115,5 +115,5 @@ sudo npm install pm2 -g
 
 To test that you app has been deployed, in a web browser, type in your ip address, followed by the port number that is displayed in git bash 
 
-![example of port number](port.PNG)
-![Alt text](web.PNG)
+![example of port number](images/port.PNG)
+![Alt text](images/web.PNG)
