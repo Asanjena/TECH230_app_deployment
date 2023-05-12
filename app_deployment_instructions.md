@@ -85,11 +85,11 @@ sudo apt-get install nodejs -y
 
 ### Download pm2
 
-1. in bash, type 'install pm2'
+1. in bash, type 'install pm2' (this is the process manager)
 2. Follow this with:
 
 ```
-sudo npm install pm2 -g
+sudo npm install pm2 -g 
 
 (the -g means make it available globally)
 
@@ -106,7 +106,7 @@ sudo npm install pm2 -g
 6. follow this with:
 
 ```
-'npm install'
+'npm install' (this is the pack manager)
 ```
 
 7. Finally, type:
@@ -119,3 +119,29 @@ To test that you app has been deployed, in a web browser, type in your ip addres
 
 ![example of port number](images/port.PNG)
 ![Alt text](images/web.PNG)
+
+
+### Adding to our provision.sh to get the app dependencies installed prior before entering VM
+
+To your provision script, add the following lines:
+
+```
+sudo apt-get install python-software-properties -y 
+
+curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+
+sudo apt-get install nodejs -y
+
+sudo npm install pm2 -g
+
+cd /home/vagrant/app 
+
+npm install
+
+node app.js
+```
+
+This will automate the previous steps of downloading nodejs (and the right version of it) and pm2. But as a DevOps engineer, you should always do everything step-by-step before you automate a process. 
+
+This is how your provision.sh file should look like at the end:
+![Updated provision.sh](images/updated_provisoning.PNG)
