@@ -141,7 +141,7 @@ npm install
 node app.js
 ```
 
-This will automate the previous steps of downloading nodejs (and the right version of it) and pm2. But as a DevOps engineer, you should always do everything step-by-step before you automate a process. 
+This will automate the previous steps of downloading nodejs (and the right version of it), pm2, and npm. But as a DevOps engineer, you should always do everything step-by-step before you automate a process. 
 
 This is how your provision.sh file should look like at the end:
 ![Updated provision.sh](images/updated_provisoning.PNG)
