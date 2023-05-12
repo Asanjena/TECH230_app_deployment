@@ -143,5 +143,92 @@ node app.js
 
 This will automate the previous steps of downloading nodejs (and the right version of it), pm2, and npm. But as a DevOps engineer, you should always do everything step-by-step before you automate a process. 
 
+
 This is how your provision.sh file should look like at the end:
 ![Updated provision.sh](images/updated_provisoning.PNG)
+
+
+
+
+### Adding two VMs
+1. Create  new folder e.g., tech230_multimachine. In this folder, copy across the vagrant and provision.sh files that we created previously. We will be making changes to these two files to create a VM for 'app' and a VM for 'db' (data base). You should also copy across the app and environment folders that we downloaded previously.
+
+2. Alter your vagrant file so that it looks like this:
+
+![Alt text](../tech230_multimachine/images/Vagrant.PNG)
+
+**note** make sure that each 'end' is in the right places for their associated 'do' (as seen in the image above).
+
+4. Your provision.sh should look like this:
+
+![Alt text](../tech230_multimachine/images/provision.PNG)
+
+As illustrated in the above image, comment out the last few lines so that they do not run. 
+
+5. In a VSCode bash terminal, locate to where you saved your new folder (tech230_multimachine). 
+Next type 'vagrant up'. This will start creating both of your VMs and may tke a few minutes. 
+
+6. Open two seperate git bash terminals, and locate to tech230_multimachine on both. One bash terminal will be used for the app VM and the other will be for the db VM. 
+
+7. In one terminal, type 'vagrant ssh app'. This terminal will be for the app VM. In the other terminal, type 'vagrant ssh db'. This will be for our db VM. 
+
+
+### DB Bash Terminal
+1. First, type:
+```
+sudo apt-get update -y
+```
+2. Follow with:
+```
+sudo apt-get upgrade -y
+```
+3. Once this has been completed, add the following line:
+![Alt text](../tech230_multimachine/images/1_db.PNG)
+
+This will add the key needed for MongoDB
+
+4. Follow this with:
+
+![Alt text](../tech230_multimachine/images/2_db.PNG)
+This will set where we install MongoDB from
+
+5. type 'sudo apt-get update -y', followed by 'sudo apt-get upgrade -y' again to grab all the MongoDB updates and implement them.
+
+6. (optional) you can use 'mongod --version' to check if you have the right version
+
+8. Type
+```
+sudo systemctl start mongod
+```
+followed by:
+
+```
+sudo systemctl enable mongod
+```
+
+and finally:
+
+```
+sudo systemctl status mongod
+```
+
+'enable' means that multiple people can access
+
+You terminal should then tell you that it is active:
+
+![Alt text](../tech230_multimachine/images/3_db.PNG)
+
+
+
+### Connecting the VMs 
+
+1. First we need to go into Mongo's configuration. Type:
+```
+sudo nano /etc/mongod.conf
+```
+2. In the terminal, scroll all the way to the bottom of the outputs displayed, and change it so that the bindIp says 0.0.0.0
+![Alt text](../tech230_multimachine/images/bingIP.PNG)
+
+This allows access from any IP address. If live, you would not want this for security reasons.
+
+3. 
