@@ -183,13 +183,13 @@ sudo apt-get update -y
 sudo apt-get upgrade -y
 ```
 3. Once this has been completed, add the following line:
-![Alt text](../tech230_multimachine/images/1_db.PNG)
+![Alt text](images/1_db.PNG)
 
 This will add the key needed for MongoDB
 
 4. Follow this with:
+![Alt text](images/2_db.PNG)
 
-![Alt text](../tech230_multimachine/images/2_db.PNG)
 This will set where we install MongoDB from
 
 5. type 'sudo apt-get update -y', followed by 'sudo apt-get upgrade -y' again to grab all the MongoDB updates and implement them.
@@ -216,7 +216,7 @@ sudo systemctl status mongod
 
 You terminal should then tell you that it is active:
 
-![Alt text](../tech230_multimachine/images/3_db.PNG)
+![Alt text](images/3_db.PNG)
 
 
 
@@ -227,8 +227,69 @@ You terminal should then tell you that it is active:
 sudo nano /etc/mongod.conf
 ```
 2. In the terminal, scroll all the way to the bottom of the outputs displayed, and change it so that the bindIp says 0.0.0.0
-![Alt text](../tech230_multimachine/images/bingIP.PNG)
+![Alt text](images/bingIP.PNG)
 
 This allows access from any IP address. If live, you would not want this for security reasons.
 
-3. 
+3. sudo systemctl restart mongod - to put changes in places
+4. sudo systemctl enable mongod 
+
+App VM bash terminal
+
+1. Make a environment variable by entering:
+```
+export my_var2=anfkasnf
+```
+
+**note** - use printenv to see environment variables
+
+2. Make variable persistant (so that it does not disappear when you leave the session). To do this type:
+```
+sudo nano .bashrc
+```
+
+You should see the following:
+![Alt text](images/bashrc.PNG)
+
+Scroll all the way to the bottom of the output and add the following line:
+![Alt text](images/bash2.PNG)
+
+then save and exit.
+
+
+3. Run the file and add changes by typing: 
+```
+source .bashrc
+```
+
+4. Type 'printev' and you should be anle to find this 
+![Alt text](images/bash3.PNG)
+
+
+5. Exit out and make sure you are still in the right place i.e. app. then type 'npm install'
+
+6. if it seeds on its own, you will see it say on the output somewhere ' Database Seeded' and 'Database Cleared'. If it does not do this automatically, type:
+```
+node seeds/seed.js
+```
+this will put all the data from mongodb into the app
+
+7. Then start the app by typing:
+```
+node app.js
+```
+
+8. if the port e.g. port 3000 is in use, use ps aux, find the line that shows where node app. js is and eneter the number frim the second coloumn after 'sudo kill' e.g. 'sudo kill 22378'. Then use 'node app.js' again to start it. 
+
+![Alt text](images/sudokill.PNG)
+
+9. 
+To check that your posts page is working, in a web broswer type:
+```
+192.168.10.100.3000/posts
+```
+
+You should then see a page like this:
+![Alt text](images/posts_page.PNG)
+
+
