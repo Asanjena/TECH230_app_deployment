@@ -173,30 +173,53 @@ Next type 'vagrant up'. This will start creating both of your VMs and may tke a 
 7. In one terminal, type 'vagrant ssh app'. This terminal will be for the app VM. In the other terminal, type 'vagrant ssh db'. This will be for our db VM. 
 
 
-### DB Bash Terminal
-1. First, type:
+### DB Bash Terminal and setting up MongoDB
+
+1. Type Vagrant ssh db
+
+2. Then upfate and upgrade the VM with any packages it finds and needs:
+
 ```
 sudo apt-get update -y
 ```
-2. Follow with:
+Followed by:
 ```
 sudo apt-get upgrade -y
 ```
-3. Once this has been completed, add the following line:
+
+Once this has been completed, we need to download a key for MongoDB. Type:
+
+```
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv D68FA50FEA312927
+```
 ![Alt text](images/1_db.PNG)
 
-This will add the key needed for MongoDB
+
 
 4. Follow this with:
+
+```
+echo "deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+```
 ![Alt text](images/2_db.PNG)
 
-This will set where we install MongoDB from
+This will read and set where we install MongoDB from
 
-5. type 'sudo apt-get update -y', followed by 'sudo apt-get upgrade -y' again to grab all the MongoDB updates and implement them.
+5. To then **upgrade** and **upgrade** and make sure we have everything installed, we can use the commands:
+```
+sudo apt-get update -y 
+sudo apt-get upgrade -y
+```
+
+This will grab all the MongoDB updates and implement them.
 
 6. (optional) you can use 'mongod --version' to check if you have the right version
 
-8. Type
+7. To install Mongo DB, type:
+```
+sudo apt-get install -y mongodb-org=3.2.20 mongodb-org-server=3.2.20 mongodb-org-shell=3.2.20 mongodb-org-mongos=3.2.20 mongodb-org-tools=3.2.20
+```
+8. Next, we can start the MongoDB server using:
 ```
 sudo systemctl start mongod
 ```
@@ -222,36 +245,43 @@ You terminal should then tell you that it is active:
 
 ### Connecting the VMs 
 
-1. First we need to go into Mongo's configuration. Type:
+1. First we need to go into Mongo's configuration. In nano text editor, type:
 ```
 sudo nano /etc/mongod.conf
 ```
-2. In the terminal, scroll all the way to the bottom of the outputs displayed, and change it so that the bindIp says 0.0.0.0
+2. In the ediytor, scroll all the way to the bottom of the outputs displayed, and change it so that the bindIp says 0.0.0.0
 ![Alt text](images/bingIP.PNG)
 
-This allows access from any IP address. If live, you would not want this for security reasons.
+This allows access from any IP address. If live/ in a production environment, you would not want this for security reasons.
 
-3. sudo systemctl restart mongod - to put changes in places
-4. sudo systemctl enable mongod 
+3. Now that we have configured the IP adress, we need to restart and enable  the data base using
 
-App VM bash terminal
-
-1. Make a environment variable by entering:
 ```
-export my_var2=anfkasnf
+sudo systemctl restart mongod
+```
+and 
+```
+sudo systemctl enable mongod 
 ```
 
-**note** - use printenv to see environment variables
+4. Next, we need to open our app VM bash terminal
 
-2. Make variable persistant (so that it does not disappear when you leave the session). To do this type:
+```
+vagrant ssh app
+```
+5. We then need to enter a global environment variable into .bashrc. This will bake it persistant/ run whenever the VM is launched and will give access to any user
+
 ```
 sudo nano .bashrc
 ```
-
 You should see the following:
 ![Alt text](images/bashrc.PNG)
 
 Scroll all the way to the bottom of the output and add the following line:
+```
+export DB_HOST=mongodb://192.168.10.150:27017/posts
+```
+
 ![Alt text](images/bash2.PNG)
 
 then save and exit.
@@ -262,13 +292,14 @@ then save and exit.
 source .bashrc
 ```
 
-4. Type 'printev' and you should be anle to find this 
-![Alt text](images/bash3.PNG)
+4. We then need to go into our 'app' directory by using 'cd app', and run the command:
 
+```
+sudo npm install 
+```
+This is because we previously had commented this step out. 
 
-5. Exit out and make sure you are still in the right place i.e. app. then type 'npm install'
-
-6. if it seeds on its own, you will see it say on the output somewhere ' Database Seeded' and 'Database Cleared'. If it does not do this automatically, type:
+5. If it seeds on its own, you will see it say on the output somewhere ' Database Seeded' and 'Database Cleared'. If it does not do this automatically, type:
 ```
 node seeds/seed.js
 ```
@@ -296,11 +327,18 @@ You should then see a page like this:
 ### Nginx reverse proxy research
 
 ## What are ports?
-- These are numeric values that helps us to identify specific processes or servives on a computer network 
+- These are numeric values that helps us to identify specific processes or servives on a computer network. They help us to know where network connections begin and end. Port numbers have specific roles and are associated with different protocols or services. Some well known ports include:
+- Port 80: HTTP (Hypertext Transfer Protocol) for web traffic.
+- Port 25: SMTP (Simple Mail Transfer Protocol) for email transfer.
 
 ## What is a reverse proxy?
-- This is a server that sits behind the firewall of a private netwok and directs requests from clients to the right backend server. It provides more control and promotes the smooth flow of network traffic between clients and servers. 
-- A proxy/ 'forward' proxy, sits in fronty of the clients, whereas a reverse proxy is a server that sits in front of one ot more web servers, intercepting requests from clients. Reverse proxy provides identity protection for servers 
+- This is a server that sits behind the firewall of a private netwok and directs requests from clients to the right backend server(s). It receives client requests and forwards them to the appropriate backend server to fulfill those requests. The responses from the backend servers are then returned to the client through the reverse proxy.It provides  the smooth flow of network traffic between clients and servers. 
+- In a regular proxy setup, the client makes a request to the proxy server, which then forwards the request to the destination server on behalf of the client. In contrast, with a reverse proxy, the client sends the request directly to the reverse proxy, which then selects the appropriate backend server to handle the request and returns the response to the client.
+
+Reverse proxies can be used for:
+- Load balancing
+- Caching
+- Security
 
 ![Reverse proxy diagram](images/reverse_proxy_process.png)
 
@@ -336,7 +374,7 @@ Make sure that your VM's are running and linked and that node js is installed
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
-    }
+    
 }
 ```
 
@@ -349,14 +387,20 @@ We can also add another location block to give acces to our ports page by out Mo
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
-    }
+    
 }
 ```
 
 make sure you save and exit editor
 
-3. To check for syntax errors, type: 'sudo nginx -t'
-4. sudo systemctl restart nginx
+3. To check for syntax errors, type: 
+```
+sudo nginx -t'
+```
+4. Then:
+```
+sudo systemctl restart nginx
+```
 5. Restart Nginx using:
 ```
  sudo systemctl restart nginx
@@ -367,9 +411,21 @@ make sure you save and exit editor
 node app.js
 ```
 
-7. To test that everything is working, type 192.168.10.100 into a web browser, and you should see the same sparta app page. 
+7. To test that everything is working, type:
+```
+ 192.168.10.100
+ ```
+ into a web browser, and you should see the same sparta app page. 
+
+ ![Alt text](images/Webpage.PNG)
+
+ To see the posts page is also working, type: 
+
+ ```
+ 192.168.10.100/posts
+ ```
+ ![Alt text](images/posts_page.PNG)
 
 
 
 
-### change to show ssh working
