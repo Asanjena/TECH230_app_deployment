@@ -293,3 +293,59 @@ You should then see a page like this:
 ![Alt text](images/posts_page.PNG)
 
 
+### Nginx reverse proxy research
+
+## What are ports?
+- These are numeric values that helps us to identify specific processes or servives on a computer network 
+
+## What is a reverse proxy?
+- This is a server that sits behind the firewall of a private netwok and directs requests from clients to the right backend server. It provides more control and promotes the smooth flow of network traffic between clients and servers. 
+- A proxy/ 'forward' proxy, sits in fronty of the clients, whereas a reverse proxy is a server that sits in front of one ot more web servers, intercepting requests from clients. Reverse proxy provides identity protection for servers 
+
+![Reverse proxy diagram](images/reverse_proxy_process.png)
+
+## Nginx configuration
+By default, Nginx provides a file 
+```
+/etc/nginx/site-available/default
+```
+ that you can modify. Within the sites available directory, the two files of importance are 'default' and 'example.com' (or a similar filename)
+
+ ### Setting up Nginx as a reverse proxy 
+
+Make sure that your VM's are running and linked and that node js is installed
+
+ 1. In your app bash terminal, type:
+ ```
+ sudo nano /etc/nginx/sites-available/default
+ ```
+
+ 2. Then scroll down to where it says server and location. Replace the underscore after 'server' with your ip adress. For the sparta app, this is 192.168.10.100;
+
+```
+ server 192.168.10.100; {
+     location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+server posts; {
+     location / {
+        proxy_pass http://localhost:3000/posts;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+3. sudo nginx -t
+4. sudo systemctl restart nginx
+
+
