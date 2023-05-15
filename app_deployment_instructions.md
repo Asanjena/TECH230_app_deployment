@@ -320,10 +320,15 @@ Make sure that your VM's are running and linked and that node js is installed
  sudo nano /etc/nginx/sites-available/default
  ```
 
- 2. Then scroll down to where it says server and location. Replace the underscore after 'server' with your ip adress. For the sparta app, this is 192.168.10.100;
+ 2. Then scroll down to where it says server and location. Replace the underscore after 'server' with your ip adress. For the sparta app, this would look like:
+ ```
+ server_name 192.168.10.100;
 
 ```
- server 192.168.10.100; {
+
+3. Next, edit the location box so that the reverse proxy will pass the requests from the ip to the port that our app is listening on:
+
+```
      location / {
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
@@ -334,8 +339,10 @@ Make sure that your VM's are running and linked and that node js is installed
     }
 }
 ```
-server posts; {
-     location / {
+
+We can also add another location block to give acces to our ports page by out MongoDB server:
+```
+     location /posts {
         proxy_pass http://localhost:3000/posts;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
@@ -344,8 +351,25 @@ server posts; {
         proxy_cache_bypass $http_upgrade;
     }
 }
+```
 
-3. sudo nginx -t
+make sure you save and exit editor
+
+3. To check for syntax errors, type: 'sudo nginx -t'
 4. sudo systemctl restart nginx
+5. Restart Nginx using:
+```
+ sudo systemctl restart nginx
+```
+
+6. If the connection between the app and db VMs were established correctly, navigate to your app folder (cd into app), and start the app using:
+```
+node app.js
+```
+
+7. To test that everything is working, type 192.168.10.100 into a web browser, and you should see the same sparta app page. 
 
 
+
+
+### change to show ssh working
